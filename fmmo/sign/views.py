@@ -1,4 +1,3 @@
-# from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView
 
@@ -12,7 +11,7 @@ from fan_forum.models import User
 class BaseRegisterView(CreateView):
     model = User
     form_class = BaseRegisterForm
-    success_url = '/'
+    success_url = '/confirm/'
 
 
 class ConfirmUser(UpdateView):
@@ -24,7 +23,7 @@ class ConfirmUser(UpdateView):
             user = User.objects.filter(code=request.POST['code'])
             if user.exists():
                 user.update(is_active=True)
-                user.update(code=True)
+                user.update(code=None)
             else:
-                return render(self.request, 'sing/invalid_code.html')
-            return redirect('account_login')
+                return render(self.request, 'sign/invalid_code.html')
+            return redirect('/')
