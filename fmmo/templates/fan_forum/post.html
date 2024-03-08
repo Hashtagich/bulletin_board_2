@@ -1,0 +1,36 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Post
+{% endblock title %}
+
+{% block content %}
+
+    <div style="text-align: center;">
+        <h2>{{ post.title }}</h2>
+        <hr>
+    </div>
+
+
+    <div style="text-align: left;">
+        <p>{{post.text}}</p>
+    </div>
+
+        {% if request.user.author == post.author%}
+            <a class="btn btn-warning" href="{% url 'post_update' post.id %}" role="button">Редактировать</a>
+            <a class="btn btn-danger" href="{% url 'post_delete' post.id %}" role="button">Удалить</a>
+        {% else %}
+           <span style="color: gray;">Кнопок редакции поста нет ты не автор поста.</span>
+            <br>
+           <a class="btn btn-primary" href="{% url 'response_create' post.id %}" role="button">Оставить отклик</a>
+
+        {% endif %}
+    <hr>
+    <h5>
+        <i>
+            {{ post.datetime_post|date:'d M. Y h:m:s' }}
+            <span style="color: gray;">(автор: {{post.author}})</span>
+        </i>
+    </h5>
+
+{% endblock content %}

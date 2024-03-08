@@ -1,0 +1,31 @@
+{% extends "account/base_manage.html" %}
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Sign Out" %}
+{% endblock head_title %}
+{% block content %}
+
+<div class="d-flex align-items-center py-4 bg-body-tertiary">
+    <main class="form-signin w-40 m-auto">
+        {% element h1 %}
+            <h1 class="h3 mb-3 fw-normal" style="text-align: center;">{% trans "Выход" %}</h1>
+        {% endelement %}
+
+        <p>{% trans 'Вы точно хотите выйти?' %}</p>
+        {% url 'account_logout' as action_url %}
+        {% element form method="post" action=action_url no_visible_fields=True %}
+            {% slot body %}
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                           name="{{ redirect_field_name }}"
+                           value="{{ redirect_field_value }}" />
+                {% endif %}
+            {% endslot %}
+            {% slot actions %}
+                <button class="btn btn-primary w-100 py-2" type="submit">{% trans 'Выход' %}</button>
+            {% endslot %}
+        {% endelement %}
+    </main>
+</div>
+{% endblock content %}

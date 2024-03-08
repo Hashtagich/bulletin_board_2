@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scroll back to top in bootstrap</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+    .back_to_top {
+        position: fixed;
+        bottom: 60px;
+        right: 20px;
+        display: none;
+    }
+    </style>
+</head>
+
+<body>
+    <a id="back-to-top" href="#" class="btn btn-dark btn-lg back_to_top" role="button">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+    <script>
+    $(document).ready(function(){
+        $(window).scroll(function () {
+                if ($(this).scrollTop() > 50) {
+                    $('#back-to-top').fadeIn();
+                } else {
+                    $('#back-to-top').fadeOut();
+                }
+            });
+            // scroll body to 0px on click
+            $('#back-to-top').click(function () {
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 400);
+                return false;
+            });
+    });
+    </script>
+</body>
+</html>

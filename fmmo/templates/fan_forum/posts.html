@@ -1,0 +1,43 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+All Posts
+{% endblock title %}
+
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>Объявления</h1>
+        {% if posts %}
+            <p><i>Количество объявлений: <u>{{posts|length}}</u></i></p>
+            <hr>
+
+        {% for val in posts %}
+            <div style="text-align: left;">
+                <a href="{% url 'post_detail' val.id %}">{{val.title}}</a>
+                <span style="color: gray;">(автор: {{val.author}})</span>
+                <br>
+                <b>{{ val.datetime_post|date:'d M. Y h:m:s' }}</b>
+                <p><b>Категории:
+                    {% for cat in val.category.all%}
+                        {{cat}}
+                    {% endfor %}
+                </b></p>
+
+                <p>{{ val.text|truncatechars:50 }}</p>
+                {% if request.user.author != val.author%}
+                    <a class="btn btn-primary" href="{% url 'response_create' val.id %}" role="button">Оставить отклик</a>
+                {% endif %}
+
+            </div>
+            <hr>
+        {% endfor %}
+
+
+        {% else %}
+            <h2>Новостей нет!</h2>
+        {% endif %}
+    </div>
+{% include "flatpages/paginate.html" %}
+{% endblock content %}
