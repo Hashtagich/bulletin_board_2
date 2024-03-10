@@ -5,5 +5,5 @@ class FanForumConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'fan_forum'
 
-    # def ready(self):
-    #     import fan_forum.signals
+    def ready(self):
+        import fan_forum.signals

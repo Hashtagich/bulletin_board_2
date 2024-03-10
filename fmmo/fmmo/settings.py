@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fan_forum',
+    'fan_forum.apps.FanForumConfig',
     'sign',
     'django.contrib.sites',
     'django.contrib.flatpages',
@@ -129,7 +129,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -153,7 +154,7 @@ STATICFILES_DIRS = [
 AUTH_USER_MODEL = 'fan_forum.User'
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 ACCOUNT_EMAIL_REQUIRED = True

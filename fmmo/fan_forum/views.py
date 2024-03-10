@@ -39,10 +39,10 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'fan_forum/post_create.html'
     context_object_name = 'post'
 
-    # permission_required = (
-    #     'fan_forum.view_post',
-    #     'fan_forum.add_post',
-    # )
+    permission_required = (
+        'fan_forum.view_post',
+        'fan_forum.add_post',
+    )
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -56,10 +56,10 @@ class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, AuthorRequired
     model_search = Post
     template_name = 'fan_forum/post_edit.html'
     form_class = PostForm
-    # permission_required = (
-    #     'fan_forum.view_post',
-    #     'fan_forum.change_post',
-    # )
+    permission_required = (
+        'fan_forum.view_post',
+        'fan_forum.change_post',
+    )
 
     def get_object(self, **kwargs):
         my_id = self.kwargs.get('pk')
@@ -72,10 +72,10 @@ class PostDeleteView(LoginRequiredMixin, PermissionRequiredMixin, AuthorRequired
     template_name = 'fan_forum/post_delete.html'
     queryset = Post.objects.all()
     success_url = '/posts/'
-    # permission_required = (
-    #     'fan_forum.view_post',
-    #     'fan_forum.delete_post',
-    # )
+    permission_required = (
+        'fan_forum.view_post',
+        'fan_forum.delete_post',
+    )
 
 
 class PersonalAccountView(LoginRequiredMixin, ListView):
@@ -121,10 +121,10 @@ class ResponseUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
     template_name = 'fan_forum/response_edit.html'
     form_class = ResponseForm
 
-    # permission_required = (
-    #     'fan_forum.view_response',
-    #     'fan_forum.change_response',
-    # )
+    permission_required = (
+        'fan_forum.view_response',
+        'fan_forum.change_response',
+    )
 
     def get_object(self, **kwargs):
         my_id = self.kwargs.get('pk')

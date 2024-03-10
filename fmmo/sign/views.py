@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView
 
-from .models import BaseRegisterForm
+from fan_forum.forms import CommonSignupForm
 from fan_forum.models import User
 
 
@@ -10,7 +10,7 @@ from fan_forum.models import User
 
 class BaseRegisterView(CreateView):
     model = User
-    form_class = BaseRegisterForm
+    form_class = CommonSignupForm
     success_url = '/confirm/'
 
 

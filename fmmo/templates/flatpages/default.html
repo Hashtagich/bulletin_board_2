@@ -29,10 +29,10 @@
 
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 text-center">
-                <li><a href="#" class="nav-link px-2 text-white">Объявления</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Поиск откликов</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Мои отклики</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Добавить объявление</a></li>
+                <li><a href="{% url 'posts'%}" class="nav-link px-2 text-white">Объявления</a></li>
+                <li><a href="{% url 'search_responses'%}" class="nav-link px-2 text-white">Поиск откликов</a></li>
+                <li><a href="{% url 'search_my_response'%}" class="nav-link px-2 text-white">Мои отклики</a></li>
+                <li><a href="{% url 'post_create'%}" class="nav-link px-2 text-white">Добавить объявление</a></li>
                 <li><a href="/admin/" class="nav-link px-2 text-white">Панель Администратора</a></li>
             </ul>
 
@@ -46,7 +46,7 @@
                 <a href="/accounts/logout/" class="btn btn-warning me-2">Выйти</a>
                 {% else %}
                 <a href="/accounts/login/" class="btn btn-outline-light me-2">Войти</a>
-                <a href="/accounts/signup/" class="btn btn-warning">Регистрация</a>
+                <a href="/sign/signup/" class="btn btn-warning">Регистрация</a>
                 {% endif %}
             </div>
 
