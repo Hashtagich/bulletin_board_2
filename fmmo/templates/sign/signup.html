@@ -11,7 +11,7 @@
                 <h1 class="h3 mb-3 fw-normal" style="text-align: center;">{% trans "Регистрация" %}</h1>
             {% endelement %}
             <p>
-                {% blocktrans %}У Вас уже есть аккаунт? Тогда осуществите <a href="{{ login_url }}">вход</a>.
+                {% blocktrans %}У Вас уже есть аккаунт? Тогда осуществите <a href="/accounts/login">вход</a>.
                 {% endblocktrans %}
             </p>
             {% url 'account_signup' as action_url %}

@@ -46,7 +46,6 @@ class CommonSignupForm(UserCreationForm, SignupForm):
         user.code = code
 
         basic_group = Group.objects.get(name='authors')
-        print("Добавлен в группу авторов!")
         basic_group.user_set.add(user)
 
         user.save()
