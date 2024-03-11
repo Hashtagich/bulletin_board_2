@@ -9,8 +9,9 @@ Create Post
     <div style="text-align: center;">
         <h1>Добавление нового объявления</h1>
         <hr>
-        <form method="POST">
+        <form action="" method="POST">
             {% csrf_token %}
+            {{ form.media }}
             {{ form }}
             <div style="text-align: center;">
                 <input type="submit" class="btn btn-success" value="Добавить объявление">

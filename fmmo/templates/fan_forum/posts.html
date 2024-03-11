@@ -15,7 +15,7 @@ All Posts
 
         {% for val in posts %}
             <div style="text-align: left;">
-                <a href="{% url 'post_detail' val.id %}">{{val.title}}</a>
+                <a href="{% url 'post_detail' val.id %}">{{val.title| safe}}</a>
                 <span style="color: gray;">(автор: {{val.author}})</span>
                 <br>
                 <b>{{ val.datetime_post|date:'d M. Y h:m:s' }}</b>
@@ -25,7 +25,7 @@ All Posts
                     {% endfor %}
                 </b></p>
 
-                <p>{{ val.text|truncatechars:50 }}</p>
+                <p>{{ val.text| safe }}</p>
                 {% if request.user.author != val.author%}
                     <a class="btn btn-primary" href="{% url 'response_create' val.id %}" role="button">Оставить отклик</a>
                 {% endif %}

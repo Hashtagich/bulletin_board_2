@@ -12,6 +12,7 @@ Edit Post
 
         <form method="POST">
             {% csrf_token %}
+            {{ form.media }}
             {{ form }}
             <input type="submit" class="btn btn-success" value="Завершить редактирование">
         </form>

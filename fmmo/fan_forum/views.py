@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import ListView, UpdateView, CreateView, DetailView, DeleteView, TemplateView
 
 from .filters import ResponseFilter, MyResponseFilter
@@ -49,6 +48,19 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         post.author = self.request.user.author
         post.save()
         return super().form_valid(form)
+
+def add_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post_item = form.save(commit=False)
+            post_item.save()
+            return  redirect('/')
+        else:
+            form = PostForm()
+        return render(request, 'fan_forum/post_create.html', {'form': form})
+
+
 
 
 class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, AuthorRequiredMixin, UpdateView):

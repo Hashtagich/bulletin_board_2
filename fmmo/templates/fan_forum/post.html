@@ -7,13 +7,13 @@ Post
 {% block content %}
 
     <div style="text-align: center;">
-        <h2>{{ post.title }}</h2>
+        <h2>{{ post.title| safe }}</h2>
         <hr>
     </div>
 
 
     <div style="text-align: left;">
-        <p>{{post.text}}</p>
+        <p>{{post.text| safe}}</p>
     </div>
 
         {% if request.user.author == post.author%}

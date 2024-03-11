@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fan_forum.apps.FanForumConfig',
     'sign',
+    'ckeditor',
+    'ckeditor_uploader',
     'django.contrib.sites',
     'django.contrib.flatpages',
     'allauth',
@@ -54,6 +56,29 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'height': 500,
+        'toolbar_Custom': [
+            ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['Image', 'Flash', 'Table',  'HorizontalRule'],
+            ['TextColor', 'BGColor'],
+            ['Smiley', 'SpecialChar'], ['Source'],
+        ],
+
+    },
+    'special': {
+        'toolbar': 'Special',
+        'toolbar_Special': [
+            ['Bold', 'Youtube'],
+        ],
+        'extraPlugins': 'youtube',
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,7 +165,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# STATIC_ROOT = 'D:/clone_projct_from_github/skillfactory/bulletin_board_2/fmmo/staticc'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
