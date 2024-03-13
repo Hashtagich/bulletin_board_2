@@ -1,0 +1,40 @@
+{% extends 'flatpages/default.html' %}
+{% block title %}
+Response
+{% endblock title %}
+
+{% block content %}
+
+
+    <div style="text-align: left;">
+        <p>{{response.text}}</p>
+    </div>
+
+
+    <hr>
+    <p>
+        <b>Статус:</b>
+        {% if response.accept %}
+            Принято
+        {% else %}
+            На рассмотрении
+        {% endif %}
+    </p>
+    <p>
+        <i>
+            <b>{{ response.datetime_response|date:'d M. Y h:m:s' }}</b>
+            <span style="color: gray;">(автор: {{response.author}})</span>
+        </i>
+    </p>
+
+    {% if request.user.author == response.author%}
+        <a class="btn btn-warning" href="{% url 'response_update' response.id %}" role="button">Редактировать</a>
+    {% endif %}
+
+    {% if not response.accept and request.user.author != response.author%}
+        <a class="btn btn-primary" href="{% url 'response_accept' response.id %}" role="button">Принять</a>
+    {% endif %}
+
+        <a class="btn btn-danger" href="{% url 'response_delete' response.id %}" role="button">Удалить</a>
+
+{% endblock content %}

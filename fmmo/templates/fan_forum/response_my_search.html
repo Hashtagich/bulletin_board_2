@@ -1,0 +1,53 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Search Responses
+{% endblock title %}
+
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>Ваши отклики</h1>
+        {% if responses %}
+            <p><i>Количество откликов: <u>{{filter.qs|length}}</u></i></p>
+            <hr>
+
+            <form  method="GET">
+                {{ filter.form }}
+                <input type="submit" class="btn btn-outline-dark" value="Найти">
+            </form>
+            <hr>
+    </div>
+
+        {% for val in responses %}
+            <div style="text-align: left;">
+                <b>Название объявления:</b> <a href="{% url 'post_detail' val.post.id %}">{{val.post.title}}</a>
+                <p>
+                    <b>Статус:</b>
+                    {% if val.accept %}
+                        Принято
+                    {% else %}
+                        На рассмотрении
+                    {% endif %}
+                </p>
+                <p><b>Отклик:</b> {{val.text|truncatechars:50}}</p>
+                <p><a href="{% url 'response_detail' val.id %}">Читать полностью</a></p>
+                <p><span style="color: gray;"><b>{{ val.datetime_response|date:'d M. Y h:m:s' }}</b> (автор: {{val.author}})</span></p>
+            </div>
+            <hr>
+        {% endfor %}
+
+    {% else %}
+        <hr>
+        <form  method="GET">
+            {{ filter.form }}
+            <input type="submit" class="btn btn-outline-dark" value="Найти">
+        </form>
+        <hr>
+        <h2>Откликов нет!</h2>
+    {% endif %}
+    </div>
+
+{% include "flatpages/paginate.html" %}
+{% endblock content %}

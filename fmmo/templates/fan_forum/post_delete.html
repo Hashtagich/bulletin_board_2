@@ -1,0 +1,23 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Delete Post
+{% endblock title %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <h2>Вы действительно хотите удалить данное объявление?</h2>
+        <hr>
+        <div style="text-align: left;">
+            <h4>{{ post.title|safe }}</h4>
+            <b>{{ post.datetime_post|date:'d M. Y h:m:s' }}</b>
+            <span style="color: gray;">(автор: {{post.author}})</span>
+            <p>{{ post.text|safe }}</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-success" value="Подтвердить">
+        </form>
+    </div>
+{% endblock content %}

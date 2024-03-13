@@ -1,0 +1,40 @@
+{% extends "account/base_entrance.html" %}
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Signup" %}
+{% endblock head_title %}
+
+{% block content %}
+    <div class="d-flex align-items-center py-4 bg-body-tertiary">
+        <main class="form-signin w-40 m-auto">
+            {% element h1 %}
+                <h1 class="h3 mb-3 fw-normal" style="text-align: center;">{% trans "Регистрация" %}</h1>
+            {% endelement %}
+            <p>
+                {% blocktrans %}У Вас уже есть аккаунт? Тогда осуществите <a href="/accounts/login">вход</a>.
+                {% endblocktrans %}
+            </p>
+            {% url 'account_signup' as action_url %}
+            {% element form form=form method="post" action=action_url tags="entrance,signup" %}
+                {% slot body %}
+                    {% csrf_token %}
+                    {% element fields form=form unlabeled=True %}
+                    {% endelement %}
+                    {% if redirect_field_value %}
+                        <input type="hidden"
+                               name="{{ redirect_field_name }}"
+                               value="{{ redirect_field_value }}" />
+                    {% endif %}
+                {% endslot %}
+                {% slot actions %}
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary w-50 py-2" type="submit">{% trans "Зарегистрироваться" %}</button>
+                    </div>
+                {% endslot %}
+            {% endelement %}
+            {% if SOCIALACCOUNT_ENABLED %}
+                {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+            {% endif %}
+        </main>
+    </div>
+{% endblock content %}

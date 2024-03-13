@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+
+    <style>
+        body {
+          background-color: {% if current_time.hour >= 18 or current_time.hour <= 8 %} black {% else %} white {% endif %};
+          color: {% if current_time.hour >= 18 or current_time.hour <= 8 %} white {% else %} black {% endif %};
+          margin: 0;
+          padding-bottom: 100px; /* Высота футера */
+        }
+    </style>
+
+</body>
+</html>

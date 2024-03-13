@@ -1,0 +1,25 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %} Вход в систему или регистрация {% endblock title %}
+
+{% block content %}
+<h2> Войти в систему </h2>
+<hr>
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+
+        {{ form.username.label }}
+        {{ form.username }}
+    <br>
+    <br>
+        {{ form.password.label }}
+        {{ form.password }}
+    <br>
+    <br>
+    <input type="submit" class="btn btn-primary" value="Войти">
+
+</form>
+
+
+
+{% endblock %}

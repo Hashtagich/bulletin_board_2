@@ -1,0 +1,21 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Edit Post
+{% endblock title %}
+
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>Редактирование объявления</h1>
+        <hr>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.media }}
+            {{ form }}
+            <input type="submit" class="btn btn-success" value="Завершить редактирование">
+        </form>
+    </div>
+
+{% endblock content %}

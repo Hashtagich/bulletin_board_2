@@ -1,0 +1,30 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Personal Account
+{% endblock title %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>Это личная страница</h1>
+    </div>
+    <hr>
+        <table>
+            <tr>
+                <th style="text-align: left;">Имя</th>
+                <td style="text-align: right;">{{user.first_name}}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Фамилия</th>
+                <td style="text-align: right;">{{user.last_name}}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Почта</th>
+                <td style="text-align: right;">{{user.email}}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Никнейм</th>
+                <td style="text-align: right;">{{user.username}}</td>
+            </tr>
+        </table>
+{% endblock content %}

@@ -1,0 +1,42 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load account %}
+{% load allauth %}
+{% block head_title %}
+    {% trans "Confirm Email Address" %}
+{% endblock head_title %}
+{% block content %}
+    <div class="d-flex align-items-center py-4 bg-body-tertiary">
+        <main class="form-signin w-40 m-auto">
+            {% element h1 %}
+                {% trans "Подтверждение адреса электронной почты" %}
+            {% endelement %}
+            {% if confirmation %}
+                {% user_display confirmation.email_address.user as user_display %}
+                {% if can_confirm %}
+                    <p>
+                        {% blocktrans with confirmation.email_address.email as email %}Пожалуйста, подтвердите, что <a href="mailto:{{ email }}">{{ email }}</a> является адресом электронной почты пользователя {{ user_display }}.{% endblocktrans %}
+                    </p>
+                    {% url 'account_confirm_email' confirmation.key as action_url %}
+                    {% element form method="post" action=action_url %}
+                        {% slot actions %}
+                            {% csrf_token %}
+                                <div style="text-align: center;">
+                                    <button class="btn btn-primary w-40 py-2" type="submit">{% trans 'Подтвердить' %}</button>
+                                </div>
+                        {% endslot %}
+                    {% endelement %}
+                {% else %}
+                    <p>
+                        {% blocktrans %}Не удается подтвердить {{ email }} поскольку он уже подтвержден другой учетной записью.{% endblocktrans %}
+                    </p>
+                {% endif %}
+            {% else %}
+                {% url 'account_email' as email_url %}
+                <p>
+                    {% blocktrans %}Срок действия этой ссылки для подтверждения по электронной почте истек или она недействительна. Пожалуйста, <a href="{{ email_url }}">отправьте новый запрос на подтверждение по электронной почте </a>.{% endblocktrans %}
+                </p>
+            {% endif %}
+        </main>
+    </div>
+{% endblock content %}
