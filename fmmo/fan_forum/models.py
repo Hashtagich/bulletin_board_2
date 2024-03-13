@@ -4,6 +4,8 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from django.utils.html import strip_tags
+
 
 # Create your models here.
 class User(AbstractUser):
@@ -19,6 +21,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    subscriber = models.ManyToManyField(User, related_name='categories')
 
     def __str__(self):
         return self.name
@@ -35,6 +38,10 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title.title()}: {self.text[:20]}'
+
+    def preview(self):
+        result = strip_tags(self.text)
+        return f'{result[:40]}...'
 
     def get_absolute_url(self):
         return f'/posts/{self.id}'

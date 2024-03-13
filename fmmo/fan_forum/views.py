@@ -1,12 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import get_object_or_404, render, redirect
+from django.template.loader import render_to_string
 from django.views.generic import ListView, UpdateView, CreateView, DetailView, DeleteView, TemplateView
 
+from fmmo.settings import EMAIL_HOST_USER, SITE_URL
 from .filters import ResponseFilter, MyResponseFilter
 from .forms import PostForm, ResponseForm
 from .mixins import AuthorRequiredMixin, AuthorNecessaryMixin
-from .models import Post, User, Response
+from .models import Post, User, Response, Category
 
 
 # Create your views here.
@@ -49,18 +52,17 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         post.save()
         return super().form_valid(form)
 
+
 def add_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post_item = form.save(commit=False)
             post_item.save()
-            return  redirect('/')
+            return redirect('/')
         else:
             form = PostForm()
         return render(request, 'fan_forum/post_create.html', {'form': form})
-
-
 
 
 class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, AuthorRequiredMixin, UpdateView):
@@ -117,6 +119,28 @@ class ResponseCreateView(LoginRequiredMixin, AuthorNecessaryMixin, CreateView):
         response.post = post
         response.author = self.request.user.author
         response.save()
+
+        # Отправка электронного сообщения
+        recipient_email = post.author.user.email
+        html_context = render_to_string(
+            'email/notification_new_response.html',
+            {
+                'text': response.text,
+                'link': f'{SITE_URL}/response/{response.pk}',
+                'title': post.title,
+                'author': response.author.user.username,
+                'preview': response.__str__,
+            }
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=f'Новый отклик на ваш пост',
+            body='',
+            from_email=EMAIL_HOST_USER,
+            to=[recipient_email],
+        )
+        msg.attach_alternative(html_context, 'text/html')
+        msg.send()
 
         return super().form_valid(form)
 
@@ -203,5 +227,34 @@ def response_accept(request, response_id):
     if not response.accept:
         response.accept = True
         response.save()
+        author_response= response.author.user
+        post = response.post
+        category = post.category.all()
+        category[0].subscriber.add(author_response)
+
+
+
+
+        # Отправка электронного сообщения
+        recipient_email = author_response.email
+        html_context = render_to_string(
+            'email/accept_response.html',
+            {
+                'cat': category[0].name,
+                'link': f'{SITE_URL}/response/{response.pk}',
+                'preview': response.__str__,
+
+            }
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=f'Одобрение отклика',
+            body='',
+            from_email=EMAIL_HOST_USER,
+            to=[recipient_email],
+        )
+        msg.attach_alternative(html_context, 'text/html')
+        msg.send()
+
 
     return redirect(f'/response/{response_id}/')
