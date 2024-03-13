@@ -1,7 +1,9 @@
 from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from ckeditor.fields import RichTextField
+
 
 # Create your models here.
 class User(AbstractUser):
@@ -26,14 +28,8 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)  # связь «один ко многим» с моделью Author
     title = models.CharField(max_length=255, default='Заголовок')
     # text = models.TextField(default='Текст объявления')
-    text = RichTextUploadingField(default='Текст объявления',
-                                  config_name='special',
-                                  external_plugin_resources=[(
-                                      'youtube',
-                                      'staticc/ckeditor/ckeditor/plugins/youtube',
-                                      'plugin.js',
-                                  )],
-                                  )
+    # text = models.CharField(widget=CKEditorUploadingWidget())
+    text = RichTextUploadingField()
     datetime_post = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField(Category, through='PostCategory')  # связь «многие ко многим» с моделью Category
 
