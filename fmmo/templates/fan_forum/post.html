@@ -20,8 +20,6 @@ Post
             <a class="btn btn-warning" href="{% url 'post_update' post.id %}" role="button">Редактировать</a>
             <a class="btn btn-danger" href="{% url 'post_delete' post.id %}" role="button">Удалить</a>
         {% else %}
-           <span style="color: gray;">Кнопок редакции поста нет ты не автор поста.</span>
-            <br>
            <a class="btn btn-primary" href="{% url 'response_create' post.id %}" role="button">Оставить отклик</a>
 
         {% endif %}

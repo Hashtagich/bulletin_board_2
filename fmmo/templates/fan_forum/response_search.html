@@ -34,7 +34,7 @@ Search Responses
                     {% endif %}
                 </p>
 
-                <p><b>Отклик:</b> {{val.text|truncatechars:50}}</p>
+                <p><b>Отклик:</b> {{val.preview |truncatechars:50}}</p>
                 <p><a href="{% url 'response_detail' val.id %}">Читать полностью</a></p>
                 <p><span style="color: gray;"><b>{{ val.datetime_response|date:'d M. Y h:m:s' }}</b> (автор: {{val.author}})</span></p>
             </div>

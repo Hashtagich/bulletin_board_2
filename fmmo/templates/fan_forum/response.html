@@ -27,14 +27,16 @@ Response
         </i>
     </p>
 
-    {% if request.user.author == response.author%}
+    {% if not response.accept and request.user.author == response.author%}
         <a class="btn btn-warning" href="{% url 'response_update' response.id %}" role="button">Редактировать</a>
     {% endif %}
 
-    {% if not response.accept and request.user.author != response.author%}
+    {% if not response.accept and request.user.author == response.post.author%}
         <a class="btn btn-primary" href="{% url 'response_accept' response.id %}" role="button">Принять</a>
     {% endif %}
 
+    {% if request.user.author == response.post.author or request.user.author == response.author%}
         <a class="btn btn-danger" href="{% url 'response_delete' response.id %}" role="button">Удалить</a>
+    {% endif %}
 
 {% endblock content %}

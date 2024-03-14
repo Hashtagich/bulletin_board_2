@@ -1,6 +1,4 @@
 from ckeditor_uploader.fields import RichTextUploadingField
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -30,8 +28,6 @@ class Category(models.Model):
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)  # связь «один ко многим» с моделью Author
     title = models.CharField(max_length=255, default='Заголовок')
-    # text = models.TextField(default='Текст объявления')
-    # text = models.CharField(widget=CKEditorUploadingWidget())
     text = RichTextUploadingField()
     datetime_post = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField(Category, through='PostCategory')  # связь «многие ко многим» с моделью Category
@@ -54,8 +50,12 @@ class Response(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)  # связь «один ко многим» с моделью Author
     accept = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.text[:20]}...'
+    def preview(self):
+        if len(self.text) > 20:
+            result = f'{self.text[:20]}...'
+        else:
+            result = self.text
+        return result
 
     def get_absolute_url(self):
         return f'/response/{self.id}'
