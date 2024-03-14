@@ -1,0 +1,42 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Responses to the post
+{% endblock title %}
+
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>Отклики к посту "{{post.title}}"</h1>
+        {% if responses %}
+            <p><i>Количество откликов: <u>{{responses|length}}</u></i></p>
+            <hr>
+
+        {% for val in responses %}
+
+                <div style="text-align: left;">
+                    <p>{{ val.preview }}</p>
+
+                    {% if val.accept %}
+                        <p><strong>Принято</strong></p>
+                    {% else %}
+                        <p><strong>На рассмотрении</strong></p>
+                    {% endif %}
+
+                    <span style="color: gray;">(автор: {{val.author}})</span>
+                    <br>
+                    <b>{{ val.datetime_response|date:'d M. Y h:m:s' }}</b>
+                    <a class="btn btn-primary" href="{% url 'response_detail' val.id %}" role="button">Читать далее</a>
+                </div>
+                <hr>
+
+        {% endfor %}
+
+
+        {% else %}
+            <h2>Откликов нет!</h2>
+        {% endif %}
+    </div>
+{% include "flatpages/paginate.html" %}
+{% endblock content %}

@@ -25,10 +25,11 @@ All Posts
                     {% endfor %}
                 </b></p>
 
-                <p>{{ val.text| safe }}</p>
+                <p>{{ val.preview| safe }}</p>
                 {% if request.user.author != val.author%}
                     <a class="btn btn-primary" href="{% url 'response_create' val.id %}" role="button">Оставить отклик</a>
                 {% endif %}
+                <a class="btn btn-primary" href="{% url 'responses_post' val.id %}" role="button">Посмотреть все отклики</a>
 
             </div>
             <hr>

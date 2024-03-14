@@ -1,16 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import get_object_or_404, render, redirect
+from django.template.loader import render_to_string
 from django.views.generic import ListView, UpdateView, CreateView, DetailView, DeleteView, TemplateView
 
+from fmmo.settings import EMAIL_HOST_USER, SITE_URL
 from .filters import ResponseFilter, MyResponseFilter
 from .forms import PostForm, ResponseForm
 from .mixins import AuthorRequiredMixin, AuthorNecessaryMixin
 from .models import Post, User, Response
+from django.db.models import Q
 
 
 # Create your views here.
-class HomeView(TemplateView):  # class HomeView(LoginRequiredMixin, TemplateView):
+class HomeView(TemplateView):
     template_name = 'flatpages/home.html'
 
     def get_context_data(self, **kwargs):
@@ -18,16 +22,15 @@ class HomeView(TemplateView):  # class HomeView(LoginRequiredMixin, TemplateView
         return context
 
 
-class PostsListView(ListView):  # class PostsList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class PostsListView(ListView):
     model = Post
     ordering = '-datetime_post'
     template_name = 'fan_forum/posts.html'
     context_object_name = 'posts'
     paginate_by = 5
-    # permission_required = ('posts.view_post',)
 
 
-class PostDetailView(DetailView):  # class PostDetail(LoginRequiredMixin, DetailView):
+class PostDetailView(DetailView):
     model = Post
     template_name = 'fan_forum/post.html'
     context_object_name = 'post'
@@ -49,18 +52,17 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         post.save()
         return super().form_valid(form)
 
+
 def add_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post_item = form.save(commit=False)
             post_item.save()
-            return  redirect('/')
+            return redirect('/')
         else:
             form = PostForm()
         return render(request, 'fan_forum/post_create.html', {'form': form})
-
-
 
 
 class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, AuthorRequiredMixin, UpdateView):
@@ -118,6 +120,28 @@ class ResponseCreateView(LoginRequiredMixin, AuthorNecessaryMixin, CreateView):
         response.author = self.request.user.author
         response.save()
 
+        # Отправка электронного сообщения
+        recipient_email = post.author.user.email
+        html_context = render_to_string(
+            'email/notification_new_response.html',
+            {
+                'text': response.text,
+                'link': f'{SITE_URL}/response/{response.pk}',
+                'title': post.title,
+                'author': response.author.user.username,
+                'preview': response.preview(),
+            }
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=f'Новый отклик на ваш пост',
+            body='',
+            from_email=EMAIL_HOST_USER,
+            to=[recipient_email],
+        )
+        msg.attach_alternative(html_context, 'text/html')
+        msg.send()
+
         return super().form_valid(form)
 
 
@@ -148,10 +172,10 @@ class ResponseDeleteView(LoginRequiredMixin, DeleteView):
     queryset = Response.objects.all()
     success_url = '/search_response/'
 
-    # permission_required = (
-    #     'fan_forum.view_response',
-    #     'fan_forum.delete_response',
-    # )
+    permission_required = (
+        'fan_forum.view_response',
+        'fan_forum.delete_response',
+    )
 
 
 class ResponsesSearchView(LoginRequiredMixin, ListView):
@@ -160,8 +184,6 @@ class ResponsesSearchView(LoginRequiredMixin, ListView):
     template_name = 'fan_forum/response_search.html'
     context_object_name = 'responses'
     paginate_by = 5
-
-    # permission_required = ('news.view_post',)
 
     def get_queryset(self):
         """Возвращает отфильтрованный перечень откликов где автором поста является залогиненный пользователь."""
@@ -182,8 +204,6 @@ class MyResponsesSearchView(LoginRequiredMixin, ListView):
     context_object_name = 'responses'
     paginate_by = 5
 
-    # permission_required = ('news.view_post',)
-
     def get_queryset(self):
         """Возвращает отфильтрованный перечень откликов где автором поста является залогиненный пользователь."""
         queryset = super().get_queryset().filter(author=self.request.user.author)
@@ -196,6 +216,32 @@ class MyResponsesSearchView(LoginRequiredMixin, ListView):
         return context
 
 
+class ResponsesPostView(LoginRequiredMixin, ListView):
+    model = Response
+    ordering = '-datetime_response'
+    template_name = 'fan_forum/responses_post.html'
+    context_object_name = 'responses'
+    paginate_by = 5
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+        user = self.request.user.author
+
+        if user == post.author:
+            return Response.objects.filter(post=post).order_by('-datetime_response')
+        elif Response.objects.filter(post=post, author=user).exists():
+            return Response.objects.filter(Q(post=post, author=user) | Q(post=post, accept=True)).order_by('-datetime_response')
+        else:
+            return Response.objects.filter(post=post, accept=True).order_by('-datetime_response')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+        context['post'] = post
+
+        return context
+
+
 @login_required
 def response_accept(request, response_id):
     response = get_object_or_404(Response, id=response_id)
@@ -203,5 +249,40 @@ def response_accept(request, response_id):
     if not response.accept:
         response.accept = True
         response.save()
+
+        author_response = response.author.user
+        post = response.post
+        category = post.category.first()
+        text_sub = '.'
+        category_name = ''
+
+        if category:
+            if not category.subscriber.filter(id=author_response.id).exists():
+                print('добавили')
+                text_sub = ', теперь Вы подписаны на категорию '
+                category_name = f'"{category.name}".'
+                category.subscriber.add(author_response)
+
+        # Отправка электронного сообщения
+        recipient_email = author_response.email
+        html_context = render_to_string(
+            'email/accept_response.html',
+            {
+                'cat': category_name,
+                'link': f'{SITE_URL}/response/{response.pk}',
+                'preview': response.preview(),
+                'text_sub': text_sub,
+
+            }
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=f'Одобрение отклика',
+            body='',
+            from_email=EMAIL_HOST_USER,
+            to=[recipient_email],
+        )
+        msg.attach_alternative(html_context, 'text/html')
+        msg.send()
 
     return redirect(f'/response/{response_id}/')

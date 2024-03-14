@@ -19,4 +19,5 @@ urlpatterns = [
     path('search_response/', ResponsesSearchView.as_view(), name='search_responses'),
     path('search_my_response/', MyResponsesSearchView.as_view(), name='search_my_response'),
     path('response_as/<int:response_id>/', response_accept, name='response_accept'),
+    path('responses/<int:pk>/', ResponsesPostView.as_view(), name='responses_post'),
 ]
